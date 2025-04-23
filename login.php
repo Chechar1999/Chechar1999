@@ -1,62 +1,93 @@
-<?php
-// Iniciar sesión para manejar mensajes de error o éxito (logout)
-session_start();
-
-// Si el usuario ya está logueado, redirigir a la vista de denuncias
-if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    header('Location: view_complaints.php');
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - Sistema de Denuncias</title>
+    <title>Registro de Denuncias - Universidad</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Estilos específicos para el login */
-        .login-container { max-width: 400px; margin-top: 50px;}
-        .login-container h1 { font-size: 1.8rem; margin-bottom: 25px;}
-        .login-container label { font-weight: normal; }
-        .login-container .form-group { margin-bottom: 20px; }
-        .login-container .btn-login { background-color: #28a745; border-color: #28a745; }
-        .login-container .btn-login:hover { background-color: #218838; }
-        .login-container .public-link { display: block; text-align: center; margin-top: 20px; color: #6c757d; }
+     <style>
+        .admin-login-link {
+            display: block;
+            text-align: right; /* Alineado a la derecha */
+            margin-top: 30px;
+            font-size: 0.85rem; /* Más pequeño */
+            color: #6c757d; /* Color gris */
+        }
+        .admin-login-link a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+         .admin-login-link a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <div class="container login-container">
-        <h1>Acceso Autorizado</h1>
-        <p>Ingrese sus credenciales para ver las denuncias.</p>
+    <div class="container">
+        <h1>Sistema de Registro de Denuncias</h1>
+        <p>Utilice este formulario para registrar su denuncia. Asegúrese de proporcionar detalles claros.</p>
 
         <?php
-        // Mostrar mensajes de error del login o mensaje de logout
-        if (isset($_GET['error']) && $_GET['error'] == 1) {
-            echo '<div class="message error">Usuario o contraseña incorrectos.</div>';
-        }
-        if (isset($_GET['logged_out']) && $_GET['logged_out'] == 1) {
-            echo '<div class="message success">Sesión cerrada exitosamente.</div>';
-        }
-         if (isset($_GET['required']) && $_GET['required'] == 1) {
-            echo '<div class="message error">Necesita iniciar sesión para acceder a esa página.</div>';
+        // Mostrar mensajes de éxito o error si existen
+        if (isset($_GET['status'])) {
+            // ... (código de mensajes igual que antes) ...
+             if ($_GET['status'] == 'success') {
+                echo '<div class="message success">Denuncia registrada exitosamente en la base de datos.</div>';
+            } elseif ($_GET['status'] == 'error_db') {
+                echo '<div class="message error">Hubo un error al guardar la denuncia en la base de datos. Por favor, intente de nuevo o contacte al administrador.</div>';
+            } elseif ($_GET['status'] == 'missing_data') {
+                 echo '<div class="message error">Error: La descripción de la denuncia y el tipo son obligatorios. Por favor, complételos.</div>';
+            }
         }
         ?>
 
-        <form action="process_login.php" method="POST">
-            <div class="form-group">
-                <label for="username">Nombre de Usuario:</label>
-                <input type="text" id="username" name="username" required>
+        <form action="submit_complaint.php" method="POST">
+            <label for="complainant_name">Su Nombre (Opcional):</label>
+            <input type="text" id="complainant_name" name="complainant_name">
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="anonymous" name="anonymous" value="1">
+                <label for="anonymous" class="checkbox-label">Registrar como Anónimo</label>
             </div>
-            <div class="form-group">
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn-login">Ingresar</button>
+            <br>
+
+            <label for="complainant_role">Su Rol en la Universidad:</label>
+            <select id="complainant_role" name="complainant_role" required>
+                <option value="">Seleccione...</option>
+                <option value="Estudiante">Estudiante</option>
+                <option value="Docente">Docente</option>
+                <option value="Personal Administrativo">Personal Administrativo</option>
+                <option value="Personal Obrero">Personal Obrero</option>
+                <option value="Externo">Externo</option>
+                <option value="No Aplica/Anónimo">No Aplica/Anónimo</option>
+            </select>
+
+            <label for="complaint_type">Tipo de Denuncia:</label>
+            <select id="complaint_type" name="complaint_type" required>
+                <option value="">Seleccione...</option>
+                <option value="Académica">Académica (Notas, evaluaciones, etc.)</option>
+                <option value="Acoso">Acoso (Sexual, laboral, etc.)</option>
+                <option value="Discriminación">Discriminación</option>
+                <option value="Administrativa">Administrativa (Trámites, servicios)</option>
+                <option value="Infraestructura">Infraestructura (Instalaciones, equipos)</option>
+                <option value="Seguridad">Seguridad</option>
+                <option value="Violencia">Violencia</option>
+                <option value="Otra">Otra</option>
+            </select>
+
+            <label for="description">Descripción Detallada de los Hechos:</label>
+            <textarea id="description" name="description" required></textarea>
+
+            <label for="involved_parties">Personas Involucradas (si aplica y conoce):</label>
+            <input type="text" id="involved_parties" name="involved_parties">
+
+            <button type="submit">Enviar Denuncia</button>
         </form>
 
-        <a href="index.php" class="public-link">Volver al registro público de denuncias</a>
-    </div>
+        <div class="admin-login-link">
+            <a href="login.php">Acceso Personal Autorizado</a>
+        </div>
+        </div>
 </body>
 </html>
