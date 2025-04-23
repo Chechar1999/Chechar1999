@@ -4,21 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Denuncias - Universidad</title>
-    <link rel="stylesheet" href="style.css"> </head>
+    <link rel="stylesheet" href="style.css">
+     <style>
+        .admin-login-link {
+            display: block;
+            text-align: right; /* Alineado a la derecha */
+            margin-top: 30px;
+            font-size: 0.85rem; /* Más pequeño */
+            color: #6c757d; /* Color gris */
+        }
+        .admin-login-link a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+         .admin-login-link a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+    </style>
+</head>
 <body>
     <div class="container">
         <h1>Sistema de Registro de Denuncias</h1>
         <p>Utilice este formulario para registrar su denuncia. Asegúrese de proporcionar detalles claros.</p>
 
         <?php
-        // Mostrar mensajes de éxito o error si existen (enviados desde submit_complaint.php)
+        // Mostrar mensajes de éxito o error si existen
         if (isset($_GET['status'])) {
-            if ($_GET['status'] == 'success') {
-                echo '<div class="message success">Denuncia registrada exitosamente. Se ha asignado un ID único para referencia futura.</div>';
-            } elseif ($_GET['status'] == 'error') {
-                echo '<div class="message error">Hubo un error al registrar la denuncia. Por favor, intente de nuevo o contacte al administrador.</div>';
+            // ... (código de mensajes igual que antes) ...
+             if ($_GET['status'] == 'success') {
+                echo '<div class="message success">Denuncia registrada exitosamente en la base de datos.</div>';
+            } elseif ($_GET['status'] == 'error_db') {
+                echo '<div class="message error">Hubo un error al guardar la denuncia en la base de datos. Por favor, intente de nuevo o contacte al administrador.</div>';
             } elseif ($_GET['status'] == 'missing_data') {
-                 echo '<div class="message error">Error: La descripción de la denuncia es obligatoria. Por favor, complétela.</div>';
+                 echo '<div class="message error">Error: La descripción de la denuncia y el tipo son obligatorios. Por favor, complételos.</div>';
             }
         }
         ?>
@@ -66,8 +85,9 @@
             <button type="submit">Enviar Denuncia</button>
         </form>
 
-        <a href="view_complaints.php" class="view-link">Ver Denuncias Registradas</a>
-    </div>
+        <div class="admin-login-link">
+            <a href="login.php">Acceso Personal Autorizado</a>
+        </div>
+        </div>
 </body>
 </html>
-
