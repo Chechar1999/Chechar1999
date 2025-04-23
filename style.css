@@ -1,0 +1,214 @@
+/* Estilos básicos generales */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+    background-color: #f8f9fa; /* Un fondo gris muy claro */
+    color: #333;
+}
+
+.container {
+    max-width: 700px; /* Ancho máximo para el contenido principal */
+    margin: 20px auto; /* Centrado horizontalmente con margen superior/inferior */
+    background: #ffffff; /* Fondo blanco para el contenedor */
+    padding: 30px;
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05); /* Sombra sutil */
+    border: 1px solid #e3e3e3; /* Borde ligero */
+}
+
+h1 {
+    color: #343a40; /* Color oscuro para el título principal */
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+p {
+    color: #555;
+    margin-bottom: 15px;
+    text-align: justify; /* Texto justificado para párrafos */
+}
+
+
+/* Estilos del Formulario (index.php) */
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #495057; /* Un gris más oscuro para etiquetas */
+    font-size: 0.95rem;
+}
+
+input[type="text"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px; /* Más padding para mejor tacto */
+    margin-bottom: 18px; /* Más espacio entre campos */
+    border: 1px solid #ced4da; /* Borde estándar */
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Transición suave */
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #80bdff; /* Color de borde al enfocar */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Sombra de enfoque */
+}
+
+
+textarea {
+    min-height: 120px; /* Altura mínima */
+    resize: vertical; /* Permitir redimensionar verticalmente */
+}
+
+.checkbox-container {
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center; /* Alinear verticalmente checkbox y label */
+}
+
+input[type="checkbox"] {
+    margin-right: 8px; /* Espacio entre checkbox y texto */
+    width: auto; /* Ancho automático para checkbox */
+    margin-bottom: 0; /* Quitar margen inferior */
+}
+
+.checkbox-label {
+    display: inline; /* Mostrar en línea */
+    margin-bottom: 0;
+    font-weight: normal; /* Texto normal para el label del checkbox */
+    color: #333;
+}
+
+button[type="submit"] {
+    background-color: #007bff; /* Azul primario de Bootstrap */
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1.1rem; /* Texto un poco más grande */
+    font-weight: 500;
+    width: 100%; /* Botón de ancho completo */
+    transition: background-color 0.2s ease;
+    text-transform: uppercase; /* Texto en mayúsculas */
+    letter-spacing: 0.5px;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+}
+
+/* Mensajes de Estado */
+.message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-size: 1rem;
+    border: 1px solid transparent;
+}
+
+.success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Enlaces */
+.view-link, .back-link {
+    display: block; /* Como bloque para ocupar ancho */
+    width: fit-content; /* Ajustar ancho al contenido */
+    margin: 25px auto 0 auto; /* Centrado y con margen superior */
+    text-align: center;
+    text-decoration: none;
+    color: #007bff;
+    padding: 10px 18px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-weight: 500;
+}
+
+.view-link:hover, .back-link:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Estilos de la Tabla (view_complaints.php) */
+.container.view-container {
+     max-width: 90%; /* Permitir que la tabla ocupe más espacio */
+     margin: 30px auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; /* Bordes colapsados */
+    margin-top: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08); /* Sombra ligera para la tabla */
+    font-size: 0.95rem; /* Tamaño de fuente ligeramente menor para la tabla */
+}
+
+th, td {
+    border: 1px solid #dee2e6; /* Borde gris claro */
+    padding: 12px 15px; /* Buen padding */
+    text-align: left;
+    vertical-align: top; /* Alinear al inicio */
+}
+
+thead th { /* Estilo específico para encabezados */
+    background-color: #f8f9fa; /* Fondo gris claro para encabezados */
+    color: #495057; /* Texto oscuro */
+    font-weight: 600; /* Texto en negrita */
+    border-bottom-width: 2px; /* Borde inferior más grueso */
+}
+
+tbody tr:nth-child(even) { /* Filas pares con fondo ligeramente diferente */
+    background-color: #f8f9fa;
+}
+
+tbody tr:hover {
+    background-color: #e9ecef; /* Resaltar fila al pasar el mouse */
+}
+
+.no-complaints {
+    text-align: center;
+    color: #6c757d; /* Gris secundario */
+    margin-top: 30px;
+    font-style: italic;
+    font-size: 1.1rem;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+/* Estilo para truncar texto largo en descripción */
+td.description {
+    max-width: 300px; /* Ancho máximo antes de truncar */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Añade '...' al final */
+    white-space: nowrap; /* Evita el salto de línea */
+    cursor: help; /* Cambia el cursor para indicar que hay más texto */
+}
+
+/* Opcional: Mostrar completo al pasar el mouse (puede desordenar un poco si es muy largo)
+ td.description:hover {
+    white-space: normal;
+    overflow: visible;
+    max-width: none;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2); /* Añadir sombra para destacar
+    position: relative; /* Ayuda con el z-index si es necesario
+    z-index: 10;
+ } */
