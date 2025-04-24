@@ -1,33 +1,39 @@
 <?php
-// Iniciar sesión y verificar autenticación
+// Iniciar sesión y verificar autenticación ANTES de cualquier salida
 session_start();
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: login.php?required=1');
     exit;
 }
 
+ini_set('display_errors', 0); // No mostrar errores en producción
+error_reporting(0);
+
 require_once 'db_config.php';
 
-// Variable para almacenar datos de la denuncia
+// Variable para almacenar datos de la denuncia y mensajes
 $complaint = null;
 $error_message = '';
 $complaint_id = null;
 
 // 1. Obtener y validar el ID de la denuncia desde la URL
-if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $complaint_id = intval($_GET['id']); // Convertir a entero por seguridad
+if (isset($_GET['id'])) {
+     // Usar filter_input para validar que sea un entero positivo
+     $complaint_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, ["options" => ["min_range"=>1]]);
+     if ($complaint_id === false) {
+         $error_message = "ID de denuncia inválido.";
+         $complaint_id = null; // Asegurarse de que no se use un ID inválido
+     }
 } else {
-    $error_message = "ID de denuncia inválido o no proporcionado.";
-    // Podríamos redirigir o simplemente mostrar el error
-    // header('Location: view_complaints.php?update_status=error'); exit;
+    $error_message = "No se proporcionó ID de denuncia.";
 }
 
 // 2. Si tenemos un ID válido, buscar la denuncia en la BD
 if ($complaint_id && empty($error_message)) {
     $sql = "SELECT id, timestamp, complainant_name, complainant_role, complaint_type, description, involved_parties, status FROM denuncias WHERE id = ?";
-    $stmt = $conn->prepare($sql);
 
-    if ($stmt) {
+    try {
+        $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $complaint_id); // 'i' para integer
         $stmt->execute();
         $result = $stmt->get_result();
@@ -38,12 +44,14 @@ if ($complaint_id && empty($error_message)) {
             $error_message = "Denuncia no encontrada con ID: " . htmlspecialchars($complaint_id);
         }
         $stmt->close();
-    } else {
-        $error_message = "Error al preparar la consulta para obtener la denuncia: " . htmlspecialchars($conn->error);
+
+    } catch (mysqli_sql_exception $e) {
+        error_log("Error al obtener denuncia para editar (ID: $complaint_id): " . $e->getMessage());
+        $error_message = "Error al cargar los datos de la denuncia.";
     }
 }
 
-$conn->close(); // Cerramos la conexión aquí, ya no la necesitamos en esta página
+$conn->close(); // Cerramos la conexión aquí
 
 // Definir los posibles estados (para el dropdown)
 $possible_statuses = ['Recibida', 'En Investigación', 'Requiere Información Adicional', 'Resuelta', 'Cerrada', 'Desestimada'];
@@ -59,13 +67,15 @@ $possible_statuses = ['Recibida', 'En Investigación', 'Requiere Información Ad
      <style>
         /* Estilos adicionales para el formulario de edición */
         .edit-form-container { max-width: 700px; }
-        .form-read-only { background-color: #e9ecef; border: 1px solid #ced4da; padding: 10px; margin-bottom: 15px; border-radius: 4px; font-size: 0.95rem; }
-        .form-read-only strong { display: block; margin-bottom: 5px; color: #495057; }
-        .form-group label { margin-bottom: 8px; }
+        .form-read-only { background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 10px 15px; margin-bottom: 15px; border-radius: 4px; font-size: 0.95rem; color: #495057; }
+        .form-read-only strong { display: block; margin-bottom: 5px; color: #343a40; font-weight: 600;}
+        .form-read-only p { white-space: pre-wrap; margin: 5px 0 0 0; background-color: #fff; padding: 8px; border: 1px solid #eee; border-radius: 3px; }
+        .form-group label { margin-bottom: 8px; font-weight: 600; }
         .btn-update { background-color: #007bff; border-color: #007bff; color: white; }
         .btn-update:hover { background-color: #0056b3; }
-        .btn-cancel { background-color: #6c757d; border-color: #6c757d; color: white; margin-left: 10px; text-decoration: none; padding: 12px 20px; border-radius: 4px; font-size: 1.1rem; }
+        .btn-cancel { background-color: #6c757d; border-color: #6c757d; color: white; margin-left: 10px; text-decoration: none; padding: 12px 20px; border-radius: 4px; font-size: 1.1rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; vertical-align: middle; } /* Asegurar alineación con botón */
         .btn-cancel:hover { background-color: #5a6268; }
+        .button-group { margin-top: 25px; }
     </style>
 </head>
 <body>
@@ -80,7 +90,7 @@ $possible_statuses = ['Recibida', 'En Investigación', 'Requiere Información Ad
                 <input type="hidden" name="complaint_id" value="<?php echo htmlspecialchars($complaint['id']); ?>">
 
                 <div class="form-read-only">
-                    <strong>Fecha y Hora de Registro:</strong> <?php echo htmlspecialchars($complaint['timestamp']); ?>
+                    <strong>Fecha y Hora de Registro:</strong> <?php echo htmlspecialchars(date('d/m/Y H:i:s', strtotime($complaint['timestamp']))); ?>
                 </div>
                  <div class="form-read-only">
                     <strong>Denunciante:</strong> <?php echo htmlspecialchars($complaint['complainant_name']); ?>
@@ -93,7 +103,7 @@ $possible_statuses = ['Recibida', 'En Investigación', 'Requiere Información Ad
                 </div>
                  <div class="form-read-only">
                     <strong>Descripción Original:</strong>
-                    <p style="white-space: pre-wrap; margin: 5px 0 0 0;"><?php echo htmlspecialchars($complaint['description']); ?></p>
+                    <p><?php echo htmlspecialchars($complaint['description']); ?></p>
                 </div>
 
                 <div class="form-group">
@@ -112,12 +122,14 @@ $possible_statuses = ['Recibida', 'En Investigación', 'Requiere Información Ad
                     </select>
                 </div>
 
-                 <button type="submit" class="btn-update">Actualizar Denuncia</button>
-                <a href="view_complaints.php" class="btn-cancel">Cancelar</a>
+                <div class="button-group">
+                    <button type="submit" class="btn-update">Actualizar Denuncia</button>
+                    <a href="view_complaints.php" class="btn-cancel">Cancelar</a>
+                </div>
 
             </form>
         <?php else: ?>
-             <p class="message error">No se pudo cargar la información de la denuncia.</p>
+             <p class="message error">No se pudo cargar la información de la denuncia solicitada.</p>
              <p><a href="view_complaints.php" class="back-link">&larr; Volver al listado</a></p>
         <?php endif; ?>
 
