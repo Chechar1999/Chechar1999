@@ -26,13 +26,12 @@
 <body>
     <div class="container">
         <h1>Sistema de Registro de Denuncias</h1>
-        <p>Utilice este formulario para registrar su denuncia. Asegúrese de proporcionar detalles claros.</p>
+        <p>Utilice este formulario para registrar su denuncia. Asegúrese de proporcionar detalles claros. Su reporte es importante.</p>
 
         <?php
-        // Mostrar mensajes de éxito o error si existen
+        // Mostrar mensajes de estado (éxito/error)
         if (isset($_GET['status'])) {
-            // ... (código de mensajes igual que antes) ...
-             if ($_GET['status'] == 'success') {
+            if ($_GET['status'] == 'success') {
                 echo '<div class="message success">Denuncia registrada exitosamente en la base de datos.</div>';
             } elseif ($_GET['status'] == 'error_db') {
                 echo '<div class="message error">Hubo un error al guardar la denuncia en la base de datos. Por favor, intente de nuevo o contacte al administrador.</div>';
@@ -88,6 +87,7 @@
         <div class="admin-login-link">
             <a href="login.php">Acceso Personal Autorizado</a>
         </div>
-        </div>
+
+    </div>
 </body>
 </html>
